@@ -1,0 +1,44 @@
+.calendar-tony {
+  display: block;
+  /* background: red; */
+}
+
+.list-tony {
+  text-align: center;
+  list-style: none;
+  padding: 0;
+  /* background: blue; */
+  /* overflow: hidden; */
+  margin: 0;
+}
+
+.list-item-tony {
+  float: left;
+  width: 13.33%;
+  /* background: yellow; */
+}
+
+.list-item-tony:first-child {
+  width: 20%;
+}
+
+.list-body-calendar .list-item-tony {
+  min-height: 48px;
+  padding: 12px 0;
+}
+
+.space-busy {
+  background: purple;
+}
+
+.space-busy-even {
+  position: relative;
+}
+
+.space-busy-even span {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  margin-top: 12px;
+}
