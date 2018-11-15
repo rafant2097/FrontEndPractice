@@ -9,11 +9,11 @@ var myPattern = (function() {
 
   function getValues() {
     return [{
-        startHour: '7:30',
-        endHour: '9:00',
-        dateStart: 'Monday',
+        startHour: '8:00',
+        endHour: '11:00',
+        dateStart: 'Friday',
         id: 'id01'
-      }
+      } 
     ];
   }
 
@@ -55,21 +55,53 @@ var myPattern = (function() {
     var validStartHour = parseStartHour(startHour);
     var validEndHour = parseEndHour(endHour);
 
-    var counter = getArrayDays(startHour, validEndHour);
+    var counter = getTotalHours(startHour, validEndHour);
+    return getArrHours(counter, validStartHour, startHour, validEndHour);
   }
 
-  function getArrayDays(startHour, validEndHour) {
-    debugger
-    var t = startHour.split(':');
-    if (t[1] === "30") {
-      t[1] = "50";
+  function getArrHours(counter, validStartHour, startHour, validEndHour) {
+    var arr = [];
+    var flag = false;
+    counter = counter - 2;
+
+    var startHourValidUnparsed = startHour.split(':');
+
+    if (startHourValidUnparsed[1] === "30") {
+      flag = true;
     }
 
-    var y = t.join().replace(',', '');
+    arr.push(validStartHour);
+
+    while (counter > 0) {
+      
+      if (flag) {
+        arr.push((+arr[arr.length-1] + 70).toString());
+      } else {
+        arr.push((+arr[arr.length-1] + 30).toString());
+      }
+
+      flag = !flag;
+
+      counter--;
+    }
+
+    arr.push(validEndHour)
+
+    return arr;
+  }
+
+  function getTotalHours(startHour, validEndHour) {
+    var startHourValidUnparsed = startHour.split(':');
+
+    if (startHourValidUnparsed[1] === "30") {
+      startHourValidUnparsed[1] = "50";
+    }
+
+    var startHourValid = startHourValidUnparsed.join().replace(',', '');
     var counter = 1;
 
-    while (y <= validEndHour) {
-      y = +y + 50
+    while (startHourValid <= validEndHour) {
+      startHourValid = +startHourValid + 50
       counter++ 
     }
     
@@ -81,9 +113,18 @@ var myPattern = (function() {
 
     values.forEach(function(currentRoomObj) {
 
-      getAllSpaces(currentRoomObj.startHour, currentRoomObj.endHour);
+      var arr = getAllSpaces(currentRoomObj.startHour, currentRoomObj.endHour);
+      var parsedDat = parseDate(currentRoomObj.dateStart);
+      addNewReservation(arr, parsedDat, currentRoomObj.id);
     })
 
+  }
+
+  function addNewReservation(arrHours, selectedDay, nameRoom) {
+    arrHours.forEach(function(currentHour) {
+      // debugger
+      $('[data-hour="' + currentHour + '"]').find('li').eq(selectedDay).addClass('space-busy')
+    });
   }
 
   function collectSelectors() {
