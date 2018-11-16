@@ -9,9 +9,9 @@ var myPattern = (function() {
 
   function getValues() {
     return [{
-        startHour: '8:00',
-        endHour: '11:00',
-        dateStart: 'Friday',
+        startHour: '7:30',
+        endHour: '11:30',
+        dateStart: 'Saturday',
         id: 'id01'
       } 
     ];
@@ -46,8 +46,12 @@ var myPattern = (function() {
   function parseEndHour(currentHour) {
     var t = currentHour.split(':');
 
-    t[0] = t[0] - 1;
-    t[1] = +t[1] + 30;
+    if(t[1]==="00"){
+      t[1] = +t[1] + 30;
+      t[0] = t[0] - 1;
+    }
+    else
+      t[1]=="00"
     return t.join().replace(',', '');
   }
 
@@ -55,7 +59,14 @@ var myPattern = (function() {
     var validStartHour = parseStartHour(startHour);
     var validEndHour = parseEndHour(endHour);
 
-    var counter = getTotalHours(startHour, validEndHour);
+    var temporalStartHour = startHour.split(':');
+    var temporalEndHour = endHour.split(':');
+    var counter;
+    //debugger
+    if(+temporalStartHour[0]<+temporalEndHour[0])
+      counter = getTotalHours(startHour, endHour);
+    else
+      counter = getTotalHours(endHour, startHour);
     return getArrHours(counter, validStartHour, startHour, validEndHour);
   }
 
@@ -63,8 +74,9 @@ var myPattern = (function() {
     var arr = [];
     var flag = false;
     counter = counter - 2;
-
+    //debugger
     var startHourValidUnparsed = startHour.split(':');
+    validEndHour = validEndHour.replace(':','');
 
     if (startHourValidUnparsed[1] === "30") {
       flag = true;
@@ -87,6 +99,12 @@ var myPattern = (function() {
 
     arr.push(validEndHour)
 
+    //debugger
+    if(validEndHour[validEndHour.length-2]=="3"){
+      counter--;
+      arr.pop();
+    }
+
     return arr;
   }
 
@@ -96,11 +114,12 @@ var myPattern = (function() {
     if (startHourValidUnparsed[1] === "30") {
       startHourValidUnparsed[1] = "50";
     }
+    validEndHour = validEndHour.replace(':','');
 
     var startHourValid = startHourValidUnparsed.join().replace(',', '');
     var counter = 1;
-
-    while (startHourValid <= validEndHour) {
+    //debugger
+    while (+startHourValid < +validEndHour) {
       startHourValid = +startHourValid + 50
       counter++ 
     }
@@ -112,7 +131,6 @@ var myPattern = (function() {
     const values = getValues();
 
     values.forEach(function(currentRoomObj) {
-
       var arr = getAllSpaces(currentRoomObj.startHour, currentRoomObj.endHour);
       var parsedDat = parseDate(currentRoomObj.dateStart);
       addNewReservation(arr, parsedDat, currentRoomObj.id);
@@ -137,3 +155,18 @@ var myPattern = (function() {
     init: init
   }
 });
+
+  function isEven(startHour, validEndHour){
+
+
+   var counter = getArrayDays(startHour, validEndHour);
+
+   if(counter%2==0){
+
+      return true;
+
+   }
+
+   return false;
+
+  }
